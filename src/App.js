@@ -1,60 +1,85 @@
-import react, { Component } from "react";
+import React, { Component } from "react";
 
 class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
       items: [],
-
-      inputValue: [],  
+      validData: false,
+      inputValue: [],
     };
   }
+
   handleInputChange = (event) => {
-    this.state.inputValue = event.target.value
-  }
+    if (!isNaN(event.target.value)) {
+      this.setState({inputValue: event.target.value});
+    }
+    this.setState({validData: false});
+  };
 
   handleSubmit = (event) => {
-    event.preventDefault()
-    alert(this.state.inputValue)
-  }
+    event.preventDefault();
+    this.setState({validData: (this.state.inputValue.length === 5)});
+  };
 
-
-  componentWillMount() {
-    fetch("http://ctp-zip-api.herokuapp.com/zip/10016")
-      .then((response) => response.json())
-      .then((response) => {
-        this.setState({
-          items: response,
+  componentDidUpdate() {
+    if (this.state.validData) {
+      const apiURL = `http://ctp-zip-api.herokuapp.com/zip/${this.state.inputValue}`;
+      fetch(apiURL)
+        .then((response) => response.json())
+        .then((response) => {
+          this.setState({
+            items: response,
+          });
         });
-      });
+      }
   }
 
   render() {
-    let { items } = this.state;
+    let { items, validData } = this.state;
 
     return (
       <div className="App">
+        <form className="input-bar" onSubmit={this.handleSubmit}>
+          <p>Zip Code:</p>
+          <input
+            placeholder="Input a Zip Code"
+            onChange={this.handleInputChange}
+          ></input>
+        </form>
 
-      <form className="input-bar" onSubmit={this.handleSubmit}>
-            <p>Zip Code:</p>
-            <input placeholder="Input a Zip Code" onChange={this.handleInputChange}></input>
-          </form>
-
-        <ul>
-          {items.map((item) => (
-            <li kenpy={item.id}>
-              State: {item.State}
-              <br />
-              Zipcode: {item.Zipcode}
-              <br />
-              Location: ({item.Lat}, {item.Long})
-              <br />
-              Population(estimated) : {item.EstimatedPopulation}
-              <br />
-              Total Wages: {item.TotalWages}
-            </li>
-          ))}
-        </ul>
+    
+        {!validData &&
+          <div>Please enter valid zip code</div>
+        }
+        
+        {validData &&   
+          <div>
+              {items.map((item) => (
+                <ul>
+                  <li key={item.RecordNumber}>
+                    State: {item.State}
+                  </li>
+                  <li>
+                    Zipcode: {item.Zipcode}
+                  </li>
+                  <li>
+                    Location: ({item.Lat}, {item.Long})
+                  </li>
+                    {item.Population && 
+                      <li>
+                        Population(estimated) : {item.EstimatedPopulation}
+                      </li>
+                    }
+                    {item.TotalWages && (
+                      <li>
+                        Total Wages: {item.TotalWages}
+                      </li>
+                    )}
+                  </ul>
+                ))}
+          </div>
+        }
       </div>
     );
   }
