@@ -50,7 +50,6 @@ class App extends Component {
             </li>
           ))}
         </ul>
-        <ZipResults results={this.state.results} />
       </div>
     );
   }
