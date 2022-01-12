@@ -5,8 +5,19 @@ class App extends Component {
     super(props);
     this.state = {
       items: [],
+
+      inputValue: [],  
     };
   }
+  handleInputChange = (event) => {
+    this.state.inputValue = event.target.value
+  }
+
+  handleSubmit = (event) => {
+    event.preventDefault()
+    alert(this.state.inputValue)
+  }
+
 
   componentWillMount() {
     fetch("http://ctp-zip-api.herokuapp.com/zip/10016")
@@ -23,6 +34,12 @@ class App extends Component {
 
     return (
       <div className="App">
+
+      <form className="input-bar" onSubmit={this.handleSubmit}>
+            <p>Zip Code:</p>
+            <input placeholder="Input a Zip Code" onChange={this.handleInputChange}></input>
+          </form>
+
         <ul>
           {items.map((item) => (
             <li kenpy={item.id}>
