@@ -5,15 +5,16 @@ class App extends Component {
     super(props);
     this.state = {
       items: [],
-      Results: [],  
+      inputValue: [],  
     };
   }
-  handleInput = (event) => {
-    this.setState({items: event.target.value})
+  handleInputChange = (event) => {
+    this.state.inputValue = event.target.value
   }
 
   handleSubmit = (event) => {
     event.preventDefault()
+    alert(this.state.inputValue)
   }
 
   componentWillMount() {
@@ -33,7 +34,7 @@ class App extends Component {
       <div className="App">
       <form className="input-bar" onSubmit={this.handleSubmit}>
             <p>Zip Code:</p>
-            <input placeholder="Input a Zip Code" onChange={this.handleInput}></input>
+            <input placeholder="Input a Zip Code" onChange={this.handleInputChange}></input>
           </form>
         <ul>
           {items.map((item) => (
